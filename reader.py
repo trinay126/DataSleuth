@@ -48,3 +48,11 @@ def parse_csv(raw_text, delimiter=",", has_header=True):
             errors.append(f"Row {line_num}: extra columns trimmed")
         rows.append(dict(zip(headers, values)))
     return headers, rows, errors
+
+def get_col(rows, col_name):
+    """Extract all values of one coloumn as a list of strings"""
+    return [row.get(col_name, "") for row in rows]
+
+def preview(rows, n=5):
+    """Return the first n rows as a quick peek."""
+    return rows[:n]
