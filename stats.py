@@ -108,3 +108,37 @@ def text_stats(values):
         "Unique"     : len(freq),
         "top_values" : top5,
     }
+
+def column_stats(values, dtype):
+    """
+    Master Function - compute all stats for one columns
+    Calls numeric_stats or text_stats based on detected dtype.
+    """
+    non_null = [v for v in values if not is_null(v)]
+    null_count = len(values) - len(non_null)
+    unique_set = set(non_null)
+
+    base = {
+        "dtype"     : dtype,
+        "total"     : len(values),
+        "non_null"  : len(non_null),
+        "null_count": null_count,
+        "null_pct"  : pct(null_count, len(values)),
+        "Unique"    : len(unique_set),
+        "Unique_pct": pct(len(unique_set), max(1, len(non_null))),
+    }
+
+    if dtype in ("integer", "float"):
+        nums = [to_float(v) for v in non_null if is_num_str(v)]
+        base.update(numeric_stats(nums))
+
+    elif dtype == "text":
+        base.update(text_stats(non_null))
+
+    elif dtype == "boolean":
+        true_set = {"true", "yes", "1", "t", "y"}
+        true_count = sum(1 for v in non_null if v.strip().lower() in true_set)
+        base["true_count"] = true_count
+        base["false_count"] = len(non_null) - true_count
+        base["true-pct"] = pct(true_count, len(non_null))
+        return base
