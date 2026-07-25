@@ -52,4 +52,59 @@ def numeric_stats(numbers):
     mean = total / n
     sorted_n = sorted(numbers)
     mid = n // 2
-    median = (sorted)
+    median = (sorted_n[mid] if n % 2 != 0 else (sorted-n[mid-1] + sorted_n[mid]) / 2)
+    variance = sum((x - mean) ** 2 for x in numbers) / n
+    std_dev = math.sqrt(variance)
+
+    q1_idx = n // 4
+    q3_idx = (3 * n) // 4
+    q1 = sorted_n[q1_idx]
+    q3 = sorted_n[q3_idx]
+    iqr = q3 - q1
+    lo_fence = q1 - 1.5 * iqr
+    hi_fence = q3 + 1.5 * iqr
+    outliers = [x for x in numbers if x < lo_fence or x > hi_fence]
+
+    freq ={}
+    for x in numbers:
+        freq[x] = freq.get(x, 0) + 1
+    mode = max(freq, key=freq.get)
+
+    return{
+        "count"           : n,
+        "sum"             : rnd(total,4),
+        "mean"            : rnd(mean, 4),
+        "median"          : rnd(median, 4),
+        "mode"            : mode,
+        "std_dev"         : rnd(std_dev, 4),
+        "min"             : sorted_n[0],
+        "max"             : sorted_n[-1],
+        "range"           : sorted_n[-1] - sorted_n[0],
+        "q1"              : q1,
+        "q3"              : q3,
+        "iqr"             : rnd(iqr, 4),
+        "outliers_count"  : len(outliers),
+        "outliers_pct"    : pct(len(outliers), n),
+        "outliers_sample" : outliers[:3],
+        }
+
+def text_stats(values):
+    """Compute stats for a text/string column"""
+
+    if not values:
+        return{}
+
+    lenghts = [len(v) for v in values]
+    freq = {}
+    for v in values:
+        freq[v] = freq.get(v, 0) + 1
+
+    top5 = sorted(freq.items, key=lambda x: x[1], reverse=True)[:5]
+    return{
+        "count"      : len(values),
+        "min_length" : min(lenghts),
+        "max_length" : max(lenghts),
+        "avg_length" : rnd(sum(lenghts) / len(lenghts), 1),
+        "Unique"     : len(freq),
+        "top_values" : top5,
+    }
