@@ -44,4 +44,12 @@ def numeric_stats(numbers):
         IQR = Q3 - Q1 (inter - quartile range)
         Outliers = Values below Q1 - 1.5*IQR or above Q3+1.5IQR
     """
-    
+    if not numbers:
+        return{}
+
+    n = len(numbers)
+    total = sum(numbers)
+    mean = total / n
+    sorted_n = sorted(numbers)
+    mid = n // 2
+    median = (sorted)
