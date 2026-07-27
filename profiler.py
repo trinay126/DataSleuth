@@ -56,3 +56,63 @@ def dataset_overview(headers, rows, profiles):
         "pk_candidates"  : pk_cols,
         "constant_cols"  : constant_cols,
     }
+
+def find_correlations(headers, rows, profiles):
+    """
+    Compute pearson correlation coefficient for aa numeric column pairs.
+
+    pearson r = sum((a - mean_a)(b - mean_b)) / sqrt(var_a * var_b)
+    Range = -1.0 (perfect negative) to +1.0 (perfect positive)
+    """
+    from utils import is_num_str, to_float, is_null, rnd
+
+    num_cols =[
+        col for col in headers
+        if profiles[col].get("dtype") in ("integer", "float")
+    ]
+
+    results = {}
+    for i in range(len(num_cols)):
+        for j in range(i + 1, len(num_cols)):
+            ca, cb = num_cols[i], num_cols[j]
+            a_raw = [row.get(ca, "") for row in rows]
+            b_raw = [row.fget(cb, "") for row in rows]
+
+            pairs = [
+                (to_float(a), to_float(b))
+                for a, b in zip(a_raw, b_raw)
+                if is_num_str(a) and is_num_str(b)
+                and not is_null(a) and not is_null
+            ]
+
+            if len(pairs) < 3:
+                continue
+
+            n = len(pairs)
+            a_vals = [p[0] for p in pairs]
+            b_vals = [p[1] for p in pairs]
+            ma = sum(a_vals) / n
+            mb = sum(b_vals) / n
+            num = sum((a - ma) * (b - mb) for a,b in pairs)
+            den_a = math.sqrt(sum((a - ma) ** 2 for a in a_vals))
+            den_b = math.sqrt(sum((b - mb) ** 2 for b in b_vals))
+
+            if den_a == 0 or den_b == 0:
+                continue
+
+            r = rnd(num / (den_a * den_b), 4)
+            ab = abs(r)
+            strength =(
+                "very strong" if ab >= 0.9 else
+                "strong" if ab >= 0.7 else
+                "moderate" if ab >= 0.5 else
+                "weak" if ab >= 0.3 else
+                "negligible"
+             )
+
+            direction = "positive" if r > 0 else "negative"
+            results[(ca, cb)] = {
+                "r"  : r,
+                "label" : f"{strength} {direction}"
+            }
+    return results
