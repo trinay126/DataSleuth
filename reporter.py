@@ -100,3 +100,37 @@ def format_alerts(alerts):
             if sev == severity:
                 lines.append(f"{ICONS.get(sev, '?')} [{col}] {msg}")
     return lines
+
+def format_correlations(corr_results):
+    """Format top correlation pairs secton"""
+    lines = section("TOP CORRELATION (perason r)")
+    if not corr_results:
+        lines.append("NO numeric column pairs to compare")
+        return lines
+
+    sorted_corr = sorted(
+        corr_results.items(),
+        key=lambda x: abs(x[1]["r"]),
+        reverse=True
+    )
+
+    for (ca, cb), data in sorted_corr[:5]:
+        r = data["r"]
+        lbl = data["label"]
+        bar = bar_chart(abs(r), 1.0, width=12)
+        lines.append(f" {ca} <-> {cb}")
+        lines.append(f" r = {r:>7} {bar} {lbl}")
+
+    return lines
+
+def format_quality_summary(counts):
+    """Format the final quality score block"""
+    total = sum(counts.values())
+    passed = counts.get("OK", 0)
+    score = round(passed / max(1, total) * 100, 1)
+    grade = (
+        "Excellent" if score >=90 else
+        "Good" if score >= 75 else
+        "Fair" if score >= 50 else
+        "Needs Work"
+    )
