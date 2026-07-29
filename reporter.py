@@ -40,4 +40,63 @@ def fomat_overview(ov):
     return lines
 
 def format_column(col_name, stats):
-    ""
+    """Format one column profile block"""
+    dtype = stats.get("dtype" , "unknown")
+    null_flag = " [i]" if stats.get("null_count", 0) > 0 else ""
+
+    lines = [
+        f"\n column : {col_name}"
+        f" {'-' * 44}"
+        f"type : {dtype}"
+        f"nulls : {stats.get('null_count', 0)} "
+        f"({stats.get('null_pct', 0)}%){null_flag}"
+        f"unique : {stats.get("unique", 0)}"
+        f"({stats.get('unique_pct', 0)}%)"
+    ]
+
+    if dtype in ("integr", "float"):
+        lines.append(f"min/max : {stats.get('min')} / {stats.get(max)}")
+        lines.append(f" mean : {stats.get("mean")}")
+        lines.append(f"median : {stats.get("median")}")
+        lines.append(f"std dev : {stats.get('std_dev')}")
+        lines.append(f"Q1/Q3 : {stats.get('q1')} / {stats.get('q3')}")
+        oc = stats.get("outlier_count", 0)
+        if oc > 0:
+            lines.append(f"Outliers : {oc} ({stats.get('outlier_pct')}%) [!]")
+            lines.append(f"Outlier eg : {stats.get('outlier_sample', [])[:3]}")
+        elif dtype == "text":
+            lines.append(
+                f"length : "
+                f"{stats.get('min_length')} - {stats.get("max_length")}"
+                f"(avg{stats.get("avg_length")})"
+            )
+            top = stats.get("top_values", [])
+            if top:
+                max_cnt = top[0][1]
+                lines.append(" top values: ")
+                for val, cnt in top[:4]:
+                    bar = bar_chart(cnt, max_cnt, width=10)
+                    lines.append(f" {str(val)[:22]:<24} {bar}({cnt})")
+
+        elif dtype == "boolean":
+            tc = stats.get("true_count", 0)
+            fc = stats.get("false_count", 0)
+            tp = stats.get("true_pct", 0)
+            lines.append(f"true : {tc} ({tp}%)")
+            lines.append(f"false : {fc} ({round(100 - tp, 1)}%)")
+    return lines
+
+def format_alerts(alerts):
+    """Format quality alert section"""
+    lines = section("DATA QUALITY ALERTS")
+    ICONS = {
+        "ERROR" : "[ERROR]",
+        "WARN"  : "[WARN]",
+        "INFO"  : "[INFO]",
+        "OK"    : "[OK]",
+    }
+    for severity in ("ERROR", "WARN", "INFO", "OK"):
+        for sev, col, msg in alerts:
+            if sev == severity:
+                lines.append(f"{ICONS.get(sev, '?')} [{col}] {msg}")
+    return lines
