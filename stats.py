@@ -99,7 +99,7 @@ def text_stats(values):
     for v in values:
         freq[v] = freq.get(v, 0) + 1
 
-    top5 = sorted(freq.items, key=lambda x: x[1], reverse=True)[:5]
+    top5 = sorted(freq.items(), key=lambda x: x[1], reverse=True)[:5]
     return{
         "count"      : len(values),
         "min_length" : min(lenghts),
@@ -140,5 +140,5 @@ def column_stats(values, dtype):
         true_count = sum(1 for v in non_null if v.strip().lower() in true_set)
         base["true_count"] = true_count
         base["false_count"] = len(non_null) - true_count
-        base["true-pct"] = pct(true_count, len(non_null))
-        return base
+        base["true_pct"] = pct(true_count, len(non_null))
+    return base

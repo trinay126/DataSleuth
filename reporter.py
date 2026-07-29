@@ -30,13 +30,13 @@ def format_overview(ov):
     lines.append(f"Total nulls : {fmt(ov['total_nulls'])}")
     flag = " [i]" if ov["null_pct"] > 5 else ""
     lines.append(f"Overall null pct : {ov['null_pct']}%{flag}")
-    lines.append(f"\n column type breakdowm:")
+    lines.append(f"\ncolumn type breakdowm:")
     for dtype, count in sorted(ov["dtype_counts"].items()):
-        lines.apppend(f"{dtype:<20}: {count}")
+        lines.append(f"{dtype:<20}: {count}")
     if ov["pk_candidates"]:
         lines.append(f"\n primary key candidates : {ov['pk_candidates']}")
     if ov["constant_cols"]:
-        lines.append(f"constant columns : {ov["constant_cols"]} [!]")
+        lines.append(f"constant columns : {ov['constant_cols']} [!]")
     return lines
 
 def format_column(col_name, stats):
@@ -45,30 +45,30 @@ def format_column(col_name, stats):
     null_flag = " [i]" if stats.get("null_count", 0) > 0 else ""
 
     lines = [
-        f"\n column : {col_name}"
-        f" {'-' * 44}"
-        f"type : {dtype}"
-        f"nulls : {stats.get('null_count', 0)} "
-        f"({stats.get('null_pct', 0)}%){null_flag}"
-        f"unique : {stats.get("unique", 0)}"
-        f"({stats.get('unique_pct', 0)}%)"
+        f"\n column : {col_name}",
+        f" {'-' * 44}",
+        f"type : {dtype}",
+        f"nulls : {stats.get('null_count', 0)} ",
+        f"({stats.get('null_pct', 0)}%){null_flag}",
+        f"unique : {stats.get('unique', 0)}",
+        f"({stats.get('unique_pct', 0)}%)",
     ]
 
-    if dtype in ("integr", "float"):
+    if dtype in ("integer", "float"):
         lines.append(f"min/max : {stats.get('min')} / {stats.get(max)}")
-        lines.append(f" mean : {stats.get("mean")}")
-        lines.append(f"median : {stats.get("median")}")
+        lines.append(f" mean : {stats.get('mean')}")
+        lines.append(f"median : {stats.get('median')}")
         lines.append(f"std dev : {stats.get('std_dev')}")
         lines.append(f"Q1/Q3 : {stats.get('q1')} / {stats.get('q3')}")
         oc = stats.get("outlier_count", 0)
         if oc > 0:
             lines.append(f"Outliers : {oc} ({stats.get('outlier_pct')}%) [!]")
             lines.append(f"Outlier eg : {stats.get('outlier_sample', [])[:3]}")
-        elif dtype == "text":
+    elif dtype == "text":
             lines.append(
                 f"length : "
-                f"{stats.get('min_length')} - {stats.get("max_length")}"
-                f"(avg{stats.get("avg_length")})"
+                f"{stats.get('min_length')} - {stats.get('max_length')}"
+                f"(avg{stats.get('avg_length')})"
             )
             top = stats.get("top_values", [])
             if top:
@@ -78,7 +78,7 @@ def format_column(col_name, stats):
                     bar = bar_chart(cnt, max_cnt, width=10)
                     lines.append(f" {str(val)[:22]:<24} {bar}({cnt})")
 
-        elif dtype == "boolean":
+    elif dtype == "boolean":
             tc = stats.get("true_count", 0)
             fc = stats.get("false_count", 0)
             tp = stats.get("true_pct", 0)
@@ -134,15 +134,15 @@ def format_quality_summary(counts):
         "Fair" if score >= 50 else
         "Needs Work"
     )
-    lines = section("QUALOTY SUMMARY")
+    lines = section("QUALITY SUMMARY")
     lines.append(f"[ERROR] : {counts.get('ERROR', 0)}")
     lines.append(f"[WARN] : {counts.get('WARN', 0)}")
-    lines.append(f"[INFO] : {counts.get("INFO", 0)}")
+    lines.append(f"[INFO] : {counts.get('INFO', 0)}")
     lines.append(f"[OK] : {counts.get('OK', 0)}")
     lines.append(f"\n Quality score : {score}% - {grade}")
     return lines
 
-def build_report(dataset_name, overview, profiles, alerts, alerts_count, correlations):
+def build_report(dataset_name, overview, profiles, alerts, alert_counts, correlations):
     """Assemble the complete report as a single string"""
     lines = header_box (
         "DataSleuth - Data Quality Report",
@@ -158,7 +158,7 @@ def build_report(dataset_name, overview, profiles, alerts, alerts_count, correla
         lines.extend(format_column(col_name, stats))
     lines.extend(format_alerts(alerts))
     lines.extend(format_correlations(correlations))
-    lines.extend(format_quality_summary(alerts_count))
+    lines.extend(format_quality_summary(alert_counts))
     return "\n".join(lines)
 
 

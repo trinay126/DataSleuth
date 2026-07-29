@@ -48,7 +48,7 @@ def dataset_overview(headers, rows, profiles):
 
     return{
         "rows"           : len(rows),
-        "coloumns"       : len(headers),
+        "columns"        : len(headers),
         "total_cells"    : total_cells,
         "total_nulls"    : total_nulls,
         "null_pct"       : null_pct,
@@ -76,7 +76,7 @@ def find_correlations(headers, rows, profiles):
         for j in range(i + 1, len(num_cols)):
             ca, cb = num_cols[i], num_cols[j]
             a_raw = [row.get(ca, "") for row in rows]
-            b_raw = [row.fget(cb, "") for row in rows]
+            b_raw = [row.get(cb, "") for row in rows]
 
             pairs = [
                 (to_float(a), to_float(b))

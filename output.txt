@@ -1,0 +1,183 @@
+Datasleuth | profiling: 'customer dataset'
+--------------------------------------------------
+  Parsed    : 15 rows  x  8 columns
+  Columns   : ['customer_id', 'name', 'age', 'city', 'score', 'revenue', 'email', 'active']
+==============================================================
+               DataSleuth - Data Quality Report               
+==============================================================
+ Dataset         : customer dataset
+ Rows            : 15
+ columns         : 8
+==============================================================
+
+DATASET OVERVIEW
+-------------------------------------------------------------
+Rows : 15
+Columns : 8
+Total cells : 120
+Total nulls : 1
+Overall null pct : 0.83%
+
+column type breakdowm:
+boolean             : 1
+float               : 1
+integer             : 3
+text                : 3
+
+COLUMN PROFILES
+-------------------------------------------------------------
+
+ column : customer_id
+ --------------------------------------------
+type : integer
+nulls : 0 
+(0.0%)
+unique : 0
+(0%)
+min/max : 1001.0 / None
+ mean : 1008.0
+median : 1008.0
+std dev : 4.3205
+Q1/Q3 : 1004.0 / 1012.0
+
+ column : name
+ --------------------------------------------
+type : text
+nulls : 1 
+(6.7%) [i]
+unique : 0
+(0%)
+length : 9 - 13(avg10.9)
+ top values: 
+ Alice Johnson            ██████████(1)
+ Bob Smith                ██████████(1)
+ Carol White              ██████████(1)
+ Dave Brown               ██████████(1)
+
+ column : age
+ --------------------------------------------
+type : integer
+nulls : 0 
+(0.0%)
+unique : 0
+(0%)
+min/max : -5.0 / None
+ mean : 31.7333
+median : 31.0
+std dev : 12.7042
+Q1/Q3 : 28.0 / 39.0
+
+ column : city
+ --------------------------------------------
+type : text
+nulls : 0 
+(0.0%)
+unique : 0
+(0%)
+length : 5 - 9(avg7.1)
+ top values: 
+ Hyderabad                ██████████(4)
+ Mumbai                   ██████████(4)
+ Delhi                    ███████░░░(3)
+ Bangalore                █████░░░░░(2)
+
+ column : score
+ --------------------------------------------
+type : integer
+nulls : 0 
+(0.0%)
+unique : 0
+(0%)
+min/max : 60.0 / None
+ mean : 81.7333
+median : 84.0
+std dev : 10.096
+Q1/Q3 : 74.0 / 91.0
+
+ column : revenue
+ --------------------------------------------
+type : float
+nulls : 0 
+(0.0%)
+unique : 0
+(0%)
+min/max : 1500.0 / None
+ mean : 3493.4833
+median : 3100.0
+std dev : 1492.9549
+Q1/Q3 : 2300.5 / 4800.0
+
+ column : email
+ --------------------------------------------
+type : text
+nulls : 0 
+(0.0%)
+unique : 0
+(0%)
+length : 12 - 17(avg14.1)
+ top values: 
+ alice@gmail.com          ██████████(1)
+ bob@yahoo.com            ██████████(1)
+ carol@hotmail.com        ██████████(1)
+ dave@gmail.com           ██████████(1)
+
+ column : active
+ --------------------------------------------
+type : boolean
+nulls : 0 
+(0.0%)
+unique : 0
+(0%)
+true : 12 (80.0%)
+false : 3 (20.0%)
+
+DATA QUALITY ALERTS
+-------------------------------------------------------------
+[ERROR] [age] 1 values(s) outside expected range [0, 120]
+[WARN] [city] 10 duplicates (66.7%)
+[WARN] [email] 1 value(s) with invalid email format
+[WARN] [active] 13 duplicates (86.7%)
+[INFO] [name] 1 null values(s) (6.7%)
+[INFO] [age] 2 duplicate value(s)
+[OK] [customer_id] No null values
+[OK] [customer_id] All values are unique
+[OK] [customer_id] No whitespace issues
+[OK] [customer_id] Type is consistent
+[OK] [name] All values are unique
+[OK] [name] No whitespace issues
+[OK] [name] Type is consistent
+[OK] [age] No null values
+[OK] [age] No whitespace issues
+[OK] [age] Type is consistent
+[OK] [city] No null values
+[OK] [city] No whitespace issues
+[OK] [city] Type is consistent
+[OK] [score] No null values
+[OK] [score] All values are unique
+[OK] [score] No whitespace issues
+[OK] [score] Type is consistent
+[OK] [score] All values within range[0, 100]
+[OK] [revenue] No null values
+[OK] [revenue] All values are unique
+[OK] [revenue] No whitespace issues
+[OK] [revenue] Type is consistent
+[OK] [email] No null values
+[OK] [email] All values are unique
+[OK] [email] No whitespace issues
+[OK] [email] Type is consistent
+[OK] [active] No null values
+[OK] [active] No whitespace issues
+[OK] [active] Type is consistent
+
+TOP CORRELATION (perason r)
+-------------------------------------------------------------
+NO numeric column pairs to compare
+
+QUALITY SUMMARY
+-------------------------------------------------------------
+[ERROR] : 1
+[WARN] : 3
+[INFO] : 2
+[OK] : 29
+
+ Quality score : 82.9% - Good
