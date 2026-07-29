@@ -21,7 +21,7 @@ def header_box(title, meta_dict, width=62):
     lines.append("=" * width)
     return lines
 
-def fomat_overview(ov):
+def format_overview(ov):
     """Format the dataset overview section"""
     lines = section("DATASET OVERVIEW")
     lines.append(f"Rows : {fmt(ov['rows'])}")
@@ -134,3 +134,32 @@ def format_quality_summary(counts):
         "Fair" if score >= 50 else
         "Needs Work"
     )
+    lines = section("QUALOTY SUMMARY")
+    lines.append(f"[ERROR] : {counts.get('ERROR', 0)}")
+    lines.append(f"[WARN] : {counts.get('WARN', 0)}")
+    lines.append(f"[INFO] : {counts.get("INFO", 0)}")
+    lines.append(f"[OK] : {counts.get('OK', 0)}")
+    lines.append(f"\n Quality score : {score}% - {grade}")
+    return lines
+
+def build_report(dataset_name, overview, profiles, alerts, alerts_count, correlations):
+    """Assemble the complete report as a single string"""
+    lines = header_box (
+        "DataSleuth - Data Quality Report",
+        {
+             "Dataset" : dataset_name,
+             "Rows"    : fmt(overview["rows"]),
+            "columns" : overview["columns"],
+         }
+    )
+    lines.extend(format_overview(overview))
+    lines.extend(section("COLUMN PROFILES"))
+    for col_name, stats in profiles.items():
+        lines.extend(format_column(col_name, stats))
+    lines.extend(format_alerts(alerts))
+    lines.extend(format_correlations(correlations))
+    lines.extend(format_quality_summary(alerts_count))
+    return "\n".join(lines)
+
+
+
